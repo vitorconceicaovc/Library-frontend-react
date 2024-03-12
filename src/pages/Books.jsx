@@ -26,8 +26,8 @@ export function Books() {
             <ul>
                 {books.map((book) => (
                     <li key={book.id}>
-                        <Link to={book.book.url}>{book.book.title}</Link> by Author 
-                        {book.book.author}
+                        <Link to={`/book/${book.id}`}>{book.title}</Link> 
+                        by Author {book.author.first_name} {book.author.last_name}
                     </li>
                 ))}
             </ul>

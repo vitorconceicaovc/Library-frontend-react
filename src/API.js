@@ -13,6 +13,26 @@ export const getBooks = async () => {
     throw error;
   }
 };
+
+export const getBookById = async (id) => {
+  try {
+    const response = await instance.get(`/rest_book/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching book with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+export const getBooksInstances = async () => {
+  try {
+    const response = await instance.get('/rest_booksinstances')
+    return response.data
+  } catch (error) {
+    console.error('Error fetching books:', error)
+    throw error;
+  }
+};
              
 export const getAuthors = async () => {
     try {
@@ -23,3 +43,13 @@ export const getAuthors = async () => {
         throw error;
     }
 }
+
+export const getAuthorById = async (id) => {
+  try {
+    const response = await instance.get(`/rest_author/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching book with ID ${id}:`, error);
+    throw error;
+  }
+};

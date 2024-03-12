@@ -26,8 +26,11 @@ export function Authors() {
             <ul>
                 {authors.map((author) => (
                     <li key={author.id}>
-                        <Link to={author.url}>{author.first_name} {author.last_name}</Link> 
-                    </li>
+                       <Link 
+                            to={`/author/${author.id}`}>
+                                {author.first_name} {author.last_name}
+                       </Link> 
+                   </li>
                 ))}
             </ul>
         </>
