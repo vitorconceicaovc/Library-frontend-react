@@ -6,7 +6,7 @@ const instance = axios.create({
 
 export const getBooks = async () => {
   try {
-    const response = await instance.get('/rest_books')
+    const response = await instance.get('/rest_books/')
     return response.data
   } catch (error) {
     console.error('Error fetching books:', error)
@@ -53,3 +53,5 @@ export const getAuthorById = async (id) => {
     throw error;
   }
 };
+
+
