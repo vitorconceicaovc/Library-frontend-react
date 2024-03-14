@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getAuthorById, getBookById, getBooks } from "../API";
+import { useParams, useNavigate } from "react-router-dom";
+import { getAuthorById, getBookById, getBooks, logOut, verifyToken } from "../API";
 
 export function AuthorDetail() {
 
+    const navigate = useNavigate();
     const [books, setBooks] = useState([]);
     const [author, setAuthor] = useState(null);
     const { id } = useParams(); 
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const tokenValid = await verifyToken();
+            if (!tokenValid) {
+                logOut(navigate)
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchAuthor = async () => {

@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { getBooks } from '../API'; 
+import { Link, useNavigate } from "react-router-dom";
+import { getBooks, logOut, verifyToken } from '../API'; 
 
 export function Books() {
+    const navigate = useNavigate();
     const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const tokenValid = await verifyToken();
+            if (!tokenValid) {
+                logOut(navigate)
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchBooks = async () => {

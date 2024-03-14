@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const instance = axios.create({
   baseURL: 'http://127.0.0.1:8000/catalog',
@@ -54,4 +55,111 @@ export const getAuthorById = async (id) => {
   }
 };
 
+export const verifyAuth = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    return !!token; 
+  } catch (error) {
+    console.error('Error verifying authentication:', error);
+    throw error;
+  }
+};
 
+export const logOut = async (navigate) => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('refreshToken');  
+  navigate('/');
+}
+
+export const getMyBooks = async () => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error('Token not found');
+    return [];
+  }
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/catalog/rest_self_booksinstances/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch books');
+    }
+
+    const responseData = await response.json();
+    const booksData = responseData.data;
+
+    return booksData;
+  } catch (error) {
+    console.error('Fetch my books error:', error.message);
+    return [];
+  }
+};
+
+export const refreshToken = async () => {
+  const token = localStorage.getItem('refreshToken');
+
+  if (!token) {
+    console.error('Refresh Token not found in localStorage');
+    return;
+  }
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh: token }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Refresh Token verification failed');
+    }
+
+    const data = await response.json();
+    localStorage.setItem('token', data.access);
+
+    console.log('New Access Token:', data.access);
+  } catch (error) {
+    console.error('Refresh Token error:', error.message);
+  }
+};
+
+export const verifyToken = async () => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error('Token not found in localStorage');
+    return false;
+  }
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/token/verify/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ token }),
+    });
+
+    if (!response.ok) {
+      refreshToken();
+      throw new Error('Token verification failed');
+    }
+
+    const verificationData = await response.json();
+    console.log('Token verification response:', verificationData);
+    return true;
+  } catch (error) {
+    console.error('Token verification error:', error.message);
+    return false;
+  }
+};

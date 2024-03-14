@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { getAuthors } from '../API'; 
+import { Link, useNavigate } from "react-router-dom";
+import { getAuthors, logOut, verifyToken } from '../API'; 
 
 export function Authors() {
+    const navigate = useNavigate();
     const [authors, setAuthors] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const tokenValid = await verifyToken();
+            if (!tokenValid) {
+                logOut(navigate)
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchAuthors = async () => {

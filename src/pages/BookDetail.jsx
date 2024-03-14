@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { getBookById, getBooksInstances } from "../API";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { getBookById, getBooksInstances, logOut, verifyToken } from "../API";
 
 export function BookDetail() {
-
+    const navigate = useNavigate();
     const [book, setBook] = useState(null);
     const [booksInstances, setBooksInstances] = useState([])
     const { id } = useParams(); 
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const tokenValid = await verifyToken();
+            if (!tokenValid) {
+                logOut(navigate)
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchBook = async () => {
