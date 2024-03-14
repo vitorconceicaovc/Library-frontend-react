@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export function Login(){
 
@@ -7,6 +8,9 @@ export function Login(){
 
     const [loged, setLoged] = useState(false)
     const [refresh, setRefresh] = useState(true)
+
+    const [showMyBooks, setShowMyBooks] = useState(false)
+    const [myBooks, setMyBooks] = useState([])
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -120,16 +124,70 @@ export function Login(){
             handleLogOut();
         }
     };
+
+    const fetchMyBooks = async () => {
+        const token = localStorage.getItem('token');
+      
+        if (!token) {
+            console.error('Token not found');
+            return;
+        }
+      
+        try {
+            const response = await fetch('http://127.0.0.1:8000/catalog/rest_self_booksinstances/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            });
+        
+            if (!response.ok) {
+            throw new Error('Failed to fetch books');
+            }
+        
+            const responseData = await response.json();
+            const booksData = responseData.data; 
+        
+            
+            setMyBooks(booksData);
+            setShowMyBooks(true);
+        } catch (error) {
+            console.error('Fetch my books error:', error.message);
+        }
+    };
     
     return (
         <div>
 
             {loged ? (
                 <div>
-                <br />
-                Login com sucesso!
+                    <h1>Ola </h1>
+                    Login com sucesso!
 
-                <button onClick={handleLogOut}>Log Out</button>
+                    <button onClick={handleLogOut}>Log Out</button>
+
+                    <br />
+
+                    <h1>My Books</h1>
+
+                    <button onClick={fetchMyBooks}>Show my books</button>
+
+                    {!showMyBooks ? (
+                        <h1>Empty List</h1>
+                    ) : (
+                        
+
+                        <ul>
+                            {myBooks.map((instance) => (
+                            <li key={instance.id}>
+                                {/* <Link to={`/book/${instance.id}`}>{instance.title}</Link> */}
+                                <h1>{instance.id}</h1>
+                            </li>
+                            ))}
+                        </ul>
+
+                    )}
 
                 </div>
             ) : ( 
