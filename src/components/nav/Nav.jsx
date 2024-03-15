@@ -30,8 +30,13 @@ const Nav = () => {
   }
 
   useEffect(() => {
-    console.log("User status:", userStatus.data);
-    console.log("Admin?:", userStatus.admin);
+    fetchMyStatus()
+  }, [login])
+
+  useEffect(() => {
+
+    console.log("User data:", userStatus.data);
+    console.log("Admin status:", userStatus.admin);
 
     if(userStatus.admin) {
       setAdmin(true)
@@ -55,7 +60,7 @@ const Nav = () => {
             </>
           }
           <br />
-          <li><button onClick={fetchMyStatus} >verivy status</button></li>
+          {/* <li><button onClick={fetchMyStatus} >verivy status</button></li> */}
           <li><button onClick={handleLogout}>Logout</button></li>
         </>
       ) : (
