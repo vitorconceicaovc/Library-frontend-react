@@ -34,6 +34,32 @@ export const getBooksInstances = async () => {
     throw error;
   }
 };
+
+export const getRequests = async () => {
+
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error('Token not found');
+    return [];
+  }
+
+  try {
+    const response = await instance.get('/requests/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      }
+    })
+
+    
+    return response.data
+  } catch (error) {
+    console.error('Error fetching books:', error)
+    throw error;
+  }
+};
              
 export const getAuthors = async () => {
     try {

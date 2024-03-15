@@ -7,7 +7,6 @@ export function Home() {
     const [books, setBooks] = useState([])
     const [booksInstances, setBooksInstances] = useState([])
     const [authors, setAuthors] = useState([])
-    
 
     useEffect(() => {
         const fetchData = async () => {
