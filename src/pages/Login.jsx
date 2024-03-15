@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { logOut, verifyToken } from "../API";
+import { getMyStatus, logOut, verifyToken } from "../API";
 
 export function Login(){
     const navigate = useNavigate();
@@ -39,6 +39,7 @@ export function Login(){
         } catch (error) {
             console.error('Login error:', error.message);
         }
+        getMyStatus()
         navigate('/');
         window.location.reload(false);
     };

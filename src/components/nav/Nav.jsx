@@ -1,40 +1,71 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { logOut, verifyAuth } from "../../API";
+import { logOut, verifyLogin, getMyStatus } from "../../API";
 
 const Nav = () => {
-  const [auth, setAuth] = useState(false);
+  const [admin, setAdmin] = useState(false);
+  const [login, setLogin] = useState(false);
+  const [userStatus, setUserStatus] = useState({})
   const navigate = useNavigate();
 
   useEffect(() => {
-    verifyAuth().then((isAuthenticated) => {
-      setAuth(isAuthenticated);
+    verifyLogin().then((login) => {
+      setLogin(login);
     });
-  }, [auth]); 
+  }, [userStatus]); 
 
   const handleLogout = () => {
     logOut(navigate);
-    setAuth(false);
+    setAdmin(false);
+    window.location.reload(false);
   };
+
+  const fetchMyStatus = async () => {
+    try {
+      const myStatusData = await getMyStatus()
+      setUserStatus(myStatusData)
+    } catch (error) {
+      
+    }
+  }
+
+  useEffect(() => {
+    console.log("User status:", userStatus.data);
+    console.log("Admin?:", userStatus.admin);
+
+    if(userStatus.admin) {
+      setAdmin(true)
+    }
+
+  }, [userStatus]);
 
   return (
     <>
       <li><Link to='/'>Home</Link></li>
       <li><Link to='/books'>All books</Link></li>
       <li><Link to='/authors'>All authors</Link></li>
-      {auth ? (
+      <br />
+      {login ? (
         <>
-            <br />
-            <li><Link to='/profile'>Profile</Link></li>
-            <li><Link to='/requirements'>Requirements</Link></li>
-            <li><button onClick={handleLogout}>Logout</button></li>
+          <li><Link to='/profile'>Profile</Link></li>
+          
+          {admin &&
+            <>             
+             <li><Link to='/requirements'>Requirements</Link></li>
+            </>
+          }
+          <br />
+          <li><button onClick={fetchMyStatus} >verivy status</button></li>
+          <li><button onClick={handleLogout}>Logout</button></li>
         </>
       ) : (
         <>
           <li><Link to='/login'>Login</Link></li>
           <li><Link to='/register'>Register</Link></li>
         </>
-      )}
+        
+      )
+      }
     </>
   );
 };

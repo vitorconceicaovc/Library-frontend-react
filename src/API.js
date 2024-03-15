@@ -55,20 +55,11 @@ export const getAuthorById = async (id) => {
   }
 };
 
-export const verifyAuth = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    return !!token; 
-  } catch (error) {
-    console.error('Error verifying authentication:', error);
-    throw error;
-  }
-};
-
 export const logOut = async (navigate) => {
   localStorage.removeItem('token');
   localStorage.removeItem('refreshToken');  
   navigate('/');
+  
 }
 
 export const getMyBooks = async () => {
@@ -161,5 +152,48 @@ export const verifyToken = async () => {
   } catch (error) {
     console.error('Token verification error:', error.message);
     return false;
+  }
+};
+
+export const getMyStatus = async () => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error('Token not found');
+    return [];
+  }
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/rest_self_user/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch my status');
+    }
+
+    const responseData = await response.json();
+    const userData = responseData;
+
+    console.log(userData)
+
+    return userData;
+  } catch (error) {
+    console.error('Fetch my user status error:', error.message);
+    return [];
+  }
+};
+
+export const verifyLogin = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    return !!token; 
+  } catch (error) {
+    console.error('Error verifying authentication:', error);
+    throw error;
   }
 };
