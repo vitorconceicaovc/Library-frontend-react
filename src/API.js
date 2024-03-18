@@ -223,3 +223,34 @@ export const verifyLogin = async () => {
     throw error;
   }
 };
+
+export const getMyRequirements = async () => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error('Token not found');
+    return [];
+  }
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/catalog/rest_self_requirements/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch requirements');
+    }
+
+    const responseData = await response.json();
+    const requirementsData = responseData.data;
+
+    return requirementsData;
+  } catch (error) {
+    console.error('Fetch my requirements error:', error.message);
+    return [];
+  }
+};
